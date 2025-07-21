@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Service Dashboard Of CaffeeTest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="https://ddi-dev.com/uploads/backend-is.png" type="image/x-icon">
+    <style>
+        :root {
+            --primary-green: #10B981;
+            --secondary-green: #059669;
+            --light-green: #D1FAE5;
+            --accent-green: #34D399;
+            --dark-green: #047857;
+            --emerald: #50C878;
+            --mint: #98FB98;
+            --white: #FFFFFF;
+            --light-gray: #F9FAFB;
+            --gray: #6B7280;
+            --dark-gray: #374151;
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-heavy: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--white) 50%, var(--mint) 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: var(--dark-gray);
+            position: relative;
+        }
+
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(52, 211, 153, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            height: 100vh;
+            width: 100vw;
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "sidebar main"
+                "sidebar footer";
+            grid-template-rows: auto 1fr auto;
+            grid-template-columns: 300px 1fr;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            grid-area: header;
+            background: var(--white);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--light-green);
+            box-shadow: var(--shadow-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .logo .material-icons {
+            font-size: 2rem;
+            color: var(--accent-green);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--success);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 500;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator .material-icons {
+            font-size: 1.2rem;
+        }
+
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--white);
+            padding: 2rem;
+            border-right: 1px solid var(--light-green);
+            box-shadow: var(--shadow-light);
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--light-green);
+            color: var(--dark-green);
+        }
+
+        .nav-item.active {
+            background: var(--primary-green);
+            color: var(--white);
+        }
+
+        .nav-item .material-icons {
+            font-size: 1.5rem;
+        }
+
+        .main {
+            grid-area: main;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--light-green);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+        }
+
+        .card-icon .material-icons {
+            font-size: 1.8rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .metric-value.success {
+            color: var(--success);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+            transition: width 0.3s ease;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--light-green);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--primary-green);
+        }
+
+        .feature-icon .material-icons {
+            font-size: 2rem;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .feature-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-green);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: var(--secondary-green);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-green);
+            color: var(--white);
+        }
+
+        .footer {
+            grid-area: footer;
+            background: var(--white);
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--light-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Base thin scrollbar (Webkit-based) */
+        ::-webkit-scrollbar {
+            width: 1px;
+            height: 1px;
+            transition: all 0.3s ease;
+        }
+
+        /* On hover – increase thickness */
+        html:hover ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* Scrollbar Track */
+        ::-webkit-scrollbar-track {
+            background: var(--white);
+            border-radius: 10px;
+        }
+
+        /* Scrollbar Thumb */
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-green), var(--secondary-green));
+            border-radius: 10px;
+            border: 2px solid var(--white);
+        }
+
+        /* Hover effect on thumb */
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent-green), var(--primary-green));
+            transform: scale(1.1);
+        }
+
+        /* Active state */
+        ::-webkit-scrollbar-thumb:active {
+            background: var(--dark-green);
+        }
+
+        /* Hide up/down buttons (WebKit) */
+        ::-webkit-scrollbar-button {
+            display: none;
+            height: 0;
+            width: 0;
+        }
+
+        /* Scrollbar corner */
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-green) var(--light-green);
+        }
+
+        /* Optional: Specific containers */
+        .sidebar,
+        .main {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-green) var(--light-gray);
+        }
+
+        /* Custom scrollbar animations */
+        @keyframes scrollGlow {
+            0% {
+                box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+            }
+        }
+
+        .main::-webkit-scrollbar-thumb:active {
+            animation: scrollGlow 0.6s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-areas:
+                    "header"
+                    "main"
+                    "footer";
+                grid-template-rows: auto 1fr auto;
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            /* Mobile scrollbar adjustments */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .main::-webkit-scrollbar {
+                width: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-pattern"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="material-icons">cloud_done</span>
+                Backend Service Dashboard
+            </div>
+            <div class="status-indicator">
+                <span class="material-icons">check_circle</span>
+                All Systems Operational
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <div class="nav-item active">
+                <span class="material-icons">dashboard</span>
+                Overview
+            </div>
+            <div class="nav-item">
+                <span class="material-icons">api</span>
+                API Endpoints
+            </div>
+            <div class="nav-item">
+                <span class="material-icons">security</span>
+                Security
+            </div>
+            <div class="nav-item">
+                <span class="material-icons">storage</span>
+                Database
+            </div>
+            <div class="nav-item">
+                <span class="material-icons">settings</span>
+                Configuration
+            </div>
+            <div class="nav-item">
+                <span class="material-icons">help</span>
+                Documentation
+            </div>
+        </nav>
+
+        <main class="main">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <span class="material-icons">speed</span>
+                        </div>
+                        <h3 class="card-title">System Performance</h3>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Response Time</span>
+                        <span class="metric-value success">45ms</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Uptime</span>
+                        <span class="metric-value success">99.9%</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">CPU Usage</span>
+                        <span class="metric-value">23%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 23%"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <span class="material-icons">memory</span>
+                        </div>
+                        <h3 class="card-title">Memory & Storage</h3>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">RAM Usage</span>
+                        <span class="metric-value">4.2GB / 16GB</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Disk Space</span>
+                        <span class="metric-value">127GB / 500GB</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Cache Hit Rate</span>
+                        <span class="metric-value success">94.2%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 26%"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <span class="material-icons">network_check</span>
+                        </div>
+                        <h3 class="card-title">Network & Traffic</h3>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Active Connections</span>
+                        <span class="metric-value success">1,247</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Requests/Min</span>
+                        <span class="metric-value">8,934</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Bandwidth</span>
+                        <span class="metric-value">2.3MB/s</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 67%"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <span class="material-icons">shield</span>
+                        </div>
+                        <h3 class="card-title">Security Status</h3>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">SSL Certificate</span>
+                        <span class="metric-value success">Valid</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Firewall</span>
+                        <span class="metric-value success">Active</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Failed Attempts</span>
+                        <span class="metric-value">0</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Last Security Scan</span>
+                        <span class="metric-value">2 hours ago</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <span class="material-icons">storage</span>
+                        </div>
+                        <h3 class="card-title">Database Health</h3>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Query Time</span>
+                        <span class="metric-value success">12ms</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Connections</span>
+                        <span class="metric-value">85</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Errors</span>
+                        <span class="metric-value">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 18%"></div>
+                    </div>
+
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <span class="material-icons">groups</span>
+                        </div>
+                        <h3 class="card-title">User Activity</h3>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Active Users</span>
+                        <span class="metric-value success">412</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Sign-ups Today</span>
+                        <span class="metric-value">57</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Avg Session Time</span>
+                        <span class="metric-value">5m 23s</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 42%"></div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">flash_on</span>
+                    </div>
+                    <h4 class="feature-title">Lightning Fast</h4>
+                    <p class="feature-description">Optimized for peak performance with advanced caching and load
+                        balancing</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">lock</span>
+                    </div>
+                    <h4 class="feature-title">Enterprise Security</h4>
+                    <p class="feature-description">Bank-grade security with encrypted data transmission and secure
+                        authentication</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">trending_up</span>
+                    </div>
+                    <h4 class="feature-title">Auto Scaling</h4>
+                    <p class="feature-description">Automatically scales resources based on demand to maintain optimal
+                        performance</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">backup</span>
+                    </div>
+                    <h4 class="feature-title">Reliable Backup</h4>
+                    <p class="feature-description">Automated daily backups with 99.99% data recovery guarantee</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">insights</span>
+                    </div>
+                    <h4 class="feature-title">Real-time Analytics</h4>
+                    <p class="feature-description">Comprehensive monitoring and analytics dashboard for performance
+                        insights</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">support_agent</span>
+                    </div>
+                    <h4 class="feature-title">24/7 Support</h4>
+                    <p class="feature-description">Round-the-clock technical support and monitoring by our expert team
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">code</span>
+                    </div>
+                    <h4 class="feature-title">Developer Friendly</h4>
+                    <p class="feature-description">Clean APIs, robust documentation, and full SDK support for rapid
+                        integration</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">update</span>
+                    </div>
+                    <h4 class="feature-title">Seamless Updates</h4>
+                    <p class="feature-description">Zero-downtime deployments with automated version rollbacks and
+                        changelogs</p>
+                </div>
+
+            </div>
+
+            <div class="btn-group">
+                <button class="btn">
+                    <span class="material-icons">description</span>
+                    API Documentation
+                </button>
+                <button class="btn btn-secondary">
+                    <span class="material-icons">analytics</span>
+                    View Metrics
+                </button>
+                <button class="btn btn-secondary">
+                    <span class="material-icons">settings</span>
+                    System Settings
+                </button>
+                <button class="btn btn-secondary">
+                    <span class="material-icons">download</span>
+                    Download Logs
+                </button>
+                <button class="btn btn-secondary">
+                    <span class="material-icons">bug_report</span>
+                    Report Issue
+                </button>
+                <button class="btn btn-secondary">
+                    <span class="material-icons" style="width: 44px;">support</span>
+                    Contact Us
+                </button>
+
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-left">
+                <span>Server: production-01</span>
+                <span>Port: 5000</span>
+                <span>Version: 2.4.1</span>
+            </div>
+            <div class="footer-right">
+                <div class="live-indicator"></div>
+                <span>Live since: ${new Date().toLocaleString()}</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Real-time data simulation
+        class DashboardManager {
+            constructor() {
+                this.isRunning = true;
+                this.metricsData = {
+                    responseTime: 45,
+                    uptime: 99.9,
+                    cpuUsage: 23,
+                    ramUsage: 4.2,
+                    ramTotal: 16,
+                    diskUsage: 127,
+                    diskTotal: 500,
+                    cacheHitRate: 94.2,
+                    activeConnections: 1247,
+                    requestsPerMin: 8934,
+                    bandwidth: 2.3,
+                    failedAttempts: 0
+                };
+                this.init();
+            }
+
+            init() {
+                this.setupNavigation();
+                this.startRealTimeUpdates();
+                this.setupInteractiveElements();
+                this.animateProgressBars();
+                this.setupNotifications();
+            }
+
+            setupNavigation() {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        // Remove active class from all items
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        // Add active class to clicked item
+                        e.currentTarget.classList.add('active');
+
+                        // Simulate navigation with animation
+                        this.animateContentTransition();
+                    });
+                });
+            }
+
+            setupInteractiveElements() {
+                const buttons = document.querySelectorAll('.btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const btnText = e.currentTarget.textContent.trim();
+                        this.handleButtonClick(btnText);
+                    });
+                });
+
+                // Add click effects to cards
+                const cards = document.querySelectorAll('.card, .feature-card');
+                cards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        card.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            card.style.transform = '';
+                        }, 150);
+                    });
+                });
+            }
+
+            handleButtonClick(buttonText) {
+                switch (buttonText) {
+                    case 'API Documentation':
+                        this.showNotification('Opening API Documentation...', 'info');
+                        break;
+                    case 'View Metrics':
+                        this.showNotification('Loading detailed metrics...', 'info');
+                        this.updateMetricsDisplay();
+                        break;
+                    case 'System Settings':
+                        this.showNotification('Accessing system settings...', 'info');
+                        break;
+                    case 'Download Logs':
+                        this.showNotification('Preparing log files for download...', 'info');
+                        break;
+                }
+            }
+
+            startRealTimeUpdates() {
+                setInterval(() => {
+                    if (this.isRunning) {
+                        this.updateMetrics();
+                        this.updateProgressBars();
+                        this.updateTimestamp();
+                    }
+                }, 3000); // Update every 3 seconds
+
+                // Update connections and requests more frequently
+                setInterval(() => {
+                    if (this.isRunning) {
+                        this.updateLiveMetrics();
+                    }
+                }, 1000); // Update every second
+            }
+
+            updateMetrics() {
+                // Simulate realistic metric changes
+                this.metricsData.responseTime = Math.max(20, this.metricsData.responseTime + (Math.random() - 0.5) * 10);
+                this.metricsData.cpuUsage = Math.max(10, Math.min(80, this.metricsData.cpuUsage + (Math.random() - 0.5) * 5));
+                this.metricsData.ramUsage = Math.max(2, Math.min(14, this.metricsData.ramUsage + (Math.random() - 0.5) * 0.5));
+                this.metricsData.cacheHitRate = Math.max(85, Math.min(99, this.metricsData.cacheHitRate + (Math.random() - 0.5) * 2));
+                this.metricsData.bandwidth = Math.max(1, Math.min(10, this.metricsData.bandwidth + (Math.random() - 0.5) * 0.5));
+
+                // Update display
+                this.updateMetricsDisplay();
+            }
+
+            updateLiveMetrics() {
+                // Update active connections
+                this.metricsData.activeConnections = Math.max(800, Math.min(2000,
+                    this.metricsData.activeConnections + Math.floor((Math.random() - 0.5) * 100)));
+
+                // Update requests per minute
+                this.metricsData.requestsPerMin = Math.max(5000, Math.min(15000,
+                    this.metricsData.requestsPerMin + Math.floor((Math.random() - 0.5) * 1000)));
+
+                // Update display
+                const connectionsElement = document.querySelector('.metric-value[data-metric="connections"]');
+                const requestsElement = document.querySelector('.metric-value[data-metric="requests"]');
+
+                if (connectionsElement) {
+                    connectionsElement.textContent = this.metricsData.activeConnections.toLocaleString();
+                }
+                if (requestsElement) {
+                    requestsElement.textContent = this.metricsData.requestsPerMin.toLocaleString();
+                }
+            }
+
+            updateMetricsDisplay() {
+                // Update response time
+                const responseTimeElement = document.querySelector('.metric-value[data-metric="response-time"]');
+                if (responseTimeElement) {
+                    responseTimeElement.textContent = Math.round(this.metricsData.responseTime) + 'ms';
+                }
+
+                // Update CPU usage
+                const cpuElement = document.querySelector('.metric-value[data-metric="cpu"]');
+                if (cpuElement) {
+                    cpuElement.textContent = Math.round(this.metricsData.cpuUsage) + '%';
+                }
+
+                // Update RAM usage
+                const ramElement = document.querySelector('.metric-value[data-metric="ram"]');
+                if (ramElement) {
+                    ramElement.textContent = `${this.metricsData.ramUsage.toFixed(1)}GB / ${this.metricsData.ramTotal}GB`;
+                }
+
+                // Update cache hit rate
+                const cacheElement = document.querySelector('.metric-value[data-metric="cache"]');
+                if (cacheElement) {
+                    cacheElement.textContent = this.metricsData.cacheHitRate.toFixed(1) + '%';
+                }
+
+                // Update bandwidth
+                const bandwidthElement = document.querySelector('.metric-value[data-metric="bandwidth"]');
+                if (bandwidthElement) {
+                    bandwidthElement.textContent = this.metricsData.bandwidth.toFixed(1) + 'MB/s';
+                }
+            }
+
+            updateProgressBars() {
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach((bar, index) => {
+                    let percentage;
+                    switch (index) {
+                        case 0: // CPU usage
+                            percentage = this.metricsData.cpuUsage;
+                            break;
+                        case 1: // RAM usage
+                            percentage = (this.metricsData.ramUsage / this.metricsData.ramTotal) * 100;
+                            break;
+                        case 2: // Network usage (simulated)
+                            percentage = (this.metricsData.bandwidth / 10) * 100;
+                            break;
+                        default:
+                            percentage = Math.random() * 100;
+                    }
+                    bar.style.width = Math.min(100, Math.max(0, percentage)) + '%';
+                });
+            }
+
+            updateTimestamp() {
+                const timestampElement = document.querySelector('.footer-right span:last-child');
+                if (timestampElement) {
+                    timestampElement.textContent = `Live since: ${new Date().toLocaleString()}`;
+                }
+            }
+
+            animateProgressBars() {
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach((bar, index) => {
+                    setTimeout(() => {
+                        bar.style.transition = 'width 1s ease-in-out';
+                    }, index * 200);
+                });
+            }
+
+            animateContentTransition() {
+                const mainContent = document.querySelector('.main');
+                mainContent.style.opacity = '0.7';
+                mainContent.style.transform = 'translateY(10px)';
+
+                setTimeout(() => {
+                    mainContent.style.opacity = '1';
+                    mainContent.style.transform = 'translateY(0)';
+                }, 200);
+            }
+
+            setupNotifications() {
+                // Create notification container
+                const notificationContainer = document.createElement('div');
+                notificationContainer.className = 'notification-container';
+                notificationContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1000;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                `;
+                document.body.appendChild(notificationContainer);
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+
+                const bgColor = type === 'success' ? 'var(--success)' :
+                    type === 'warning' ? 'var(--warning)' :
+                        'var(--primary-green)';
+
+                notification.style.cssText = `
+                    background: ${bgColor};
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 10px;
+                    box-shadow: var(--shadow-medium);
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    font-weight: 500;
+                    min-width: 300px;
+                `;
+
+                notification.innerHTML = `
+                    <span class="material-icons">${type === 'success' ? 'check_circle' :
+                        type === 'warning' ? 'warning' : 'info'}</span>
+                    ${message}
+                `;
+
+                const container = document.querySelector('.notification-container');
+                container.appendChild(notification);
+
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+
+                // Animate out and remove
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        container.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            // System status checker
+            checkSystemHealth() {
+                const checks = [
+                    { name: 'API Endpoints', status: 'healthy' },
+                    { name: 'Database Connection', status: 'healthy' },
+                    { name: 'Redis Cache', status: 'healthy' },
+                    { name: 'External Services', status: 'healthy' },
+                    { name: 'SSL Certificate', status: 'healthy' }
+                ];
+
+                return checks;
+            }
+
+            // Simulate system alerts
+            simulateAlerts() {
+                const alerts = [
+                    'High CPU usage detected on server-02',
+                    'SSL certificate expires in 30 days',
+                    'Database backup completed successfully',
+                    'New security patch available',
+                    'Performance optimization completed'
+                ];
+
+                setInterval(() => {
+                    if (Math.random() < 0.1) { // 10% chance every interval
+                        const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+                        this.showNotification(randomAlert, 'info');
+                    }
+                }, 30000); // Check every 30 seconds
+            }
+        }
+
+        // Utility functions
+        function formatBytes(bytes) {
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            if (bytes === 0) return '0 Bytes';
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function formatUptime(seconds) {
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            return `${days}d ${hours}h ${minutes}m`;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case '1':
+                        e.preventDefault();
+                        document.querySelector('.nav-item').click();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        location.reload();
+                        break;
+                }
+            }
+        });
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add data attributes to metric values for easier targeting
+            const metricValues = document.querySelectorAll('.metric-value');
+            metricValues.forEach((element, index) => {
+                const metricText = element.parentElement.querySelector('.metric-label').textContent.toLowerCase();
+                if (metricText.includes('response')) {
+                    element.setAttribute('data-metric', 'response-time');
+                } else if (metricText.includes('cpu')) {
+                    element.setAttribute('data-metric', 'cpu');
+                } else if (metricText.includes('ram')) {
+                    element.setAttribute('data-metric', 'ram');
+                } else if (metricText.includes('cache')) {
+                    element.setAttribute('data-metric', 'cache');
+                } else if (metricText.includes('connections')) {
+                    element.setAttribute('data-metric', 'connections');
+                } else if (metricText.includes('requests')) {
+                    element.setAttribute('data-metric', 'requests');
+                } else if (metricText.includes('bandwidth')) {
+                    element.setAttribute('data-metric', 'bandwidth');
+                }
+            });
+
+            // Initialize dashboard manager
+            const dashboard = new DashboardManager();
+
+            // Start alert simulation
+            dashboard.simulateAlerts();
+
+            // Welcome notification
+            setTimeout(() => {
+                dashboard.showNotification('Dashboard loaded successfully!', 'success');
+            }, 1000);
+
+            // Performance tip
+            setTimeout(() => {
+                dashboard.showNotification('Tip: Use Ctrl+1 to navigate to overview', 'info');
+            }, 5000);
+        });
+
+        // Handle visibility change (pause updates when tab is not active)
+        document.addEventListener('visibilitychange', () => {
+            const dashboard = window.dashboardInstance;
+            if (dashboard) {
+                dashboard.isRunning = !document.hidden;
+            }
+        });
+
+        // Service Worker registration (for PWA capabilities)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>
