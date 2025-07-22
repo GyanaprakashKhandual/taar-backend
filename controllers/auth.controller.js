@@ -85,9 +85,31 @@ const logout = (req, res) => {
 };
 
 
+const updateProfile = async (req, res) => {
+  try {
+    
+    const {profilePic} = req.body;
+    const userId = req.user._id;
 
+    if(!profilePic) {
+      return res.status(400)
+    }
 
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    const updateUser = await User.findByIdAndUpdate(userId, {profilePic: uploadResponse.secure_url}, {new: true});
+  } catch (error) {
+    console.log('Error in update profile: ', error);
+    res.status(500).json({message: 'Internal server error'});
+  }
+}
 
+const checkAuth = (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log('Error in check auth controller', error);
+    res.status(500).json({message: 'Internal server error'});
+  }
+}
 
-
-module.exports = { register, login, logout };
+module.exports = { register, login, logout, updateProfile, checkAuth };
