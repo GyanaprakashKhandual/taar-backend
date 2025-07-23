@@ -1,11 +1,13 @@
 const express = require('express');
 const path = require('path');
-
+const cors = require('cors');
 const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/auth.route');
 
-
+app.use(cors({
+  origin: 'http://localhost:3000/'
+}))
 
 
 
